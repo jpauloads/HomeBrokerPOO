@@ -1,2 +1,3 @@
 # HomeBrokerPOO
-É isso ai
+Vamo controla as etapas e problemas aqui
+
