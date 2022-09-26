@@ -14,6 +14,7 @@ import java.util.Objects;
  * @author jp_te
  */
 public class Cliente {
+    private static int nextId;
     private int id;
     private String cpf;
     private String endereco;
@@ -21,6 +22,7 @@ public class Cliente {
     private String nome;
     private String telefone;
     private String senha;
+    private Conta conta;
     private Usuario tipoUsuario;
     private Date dataCriacao;
     private Date dataModificacao;
@@ -46,6 +48,9 @@ public class Cliente {
     public String getSenha(){
         return senha;
     }
+    public Conta getConta(){
+        return conta;
+    }
     public Usuario getTipoUsuario(){
         return tipoUsuario;
     }
@@ -56,9 +61,7 @@ public class Cliente {
         return dataModificacao;
     }
 
-    public void setId(int id){
-        this.id = id;
-    }
+    
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
@@ -77,6 +80,9 @@ public class Cliente {
     public void setSenha(String senha){
         this.senha = senha;
     }
+    public void setConta(Conta conta){
+        this.conta = conta;
+    }
     public void setTipoUsuario(Usuario tipoUsuario){
         this.tipoUsuario = tipoUsuario;
     }
@@ -88,12 +94,14 @@ public class Cliente {
     }
     
     public Cliente(){
-        
+        this.id = nextId++;
+        this.dataCriacao = new Date();
+        this.dataModificacao = new Date();
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = 7;
         return hash;
     }
 
@@ -130,6 +138,9 @@ public class Cliente {
         if (!Objects.equals(this.senha, other.senha)) {
             return false;
         }
+        if (!Objects.equals(this.conta, other.conta)) {
+            return false;
+        }
         if (this.tipoUsuario != other.tipoUsuario) {
             return false;
         }
@@ -141,6 +152,9 @@ public class Cliente {
         }
         return true;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Cliente{" + "id=" + id + ", cpf=" + cpf + ", endereco=" + endereco + ", login=" + login + ", nome=" + nome + ", telefone=" + telefone + ", senha=" + senha + ", conta=" + conta + ", tipoUsuario=" + tipoUsuario + ", dataCriacao=" + dataCriacao + ", dataModificacao=" + dataModificacao + '}';
+    }    
 }
