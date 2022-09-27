@@ -6,6 +6,8 @@
 package Entities;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -14,11 +16,20 @@ import java.util.Objects;
  * @author jp_te
  */
 public class Conta {
+    private static int nextId;
     private int id;
-    private BigDecimal saldo;
+    private BigDecimal saldo = BigDecimal.valueOf(0.00);
     private Cliente cliente;
     private Date dataCriacao;
     private Date dataModificacao;
+    
+    public Conta(){
+        BigDecimal depositoGratis = new BigDecimal("20000");
+        this.id = nextId++;
+        this.dataCriacao = new Date();
+        this.dataModificacao = new Date();
+        this.saldo = depositoGratis;
+    }
     
     public int getId(){
         return id;
@@ -53,17 +64,17 @@ public class Conta {
     }
     
     public void deposito(BigDecimal valor){
-        this.saldo.add(valor);
+        this.saldo = this.saldo.add(valor);
     }
     public void saque(BigDecimal valor){
-        this.saldo.subtract(valor);
+        this.saldo = this.saldo.subtract(valor);
     }
     public void pagamento(BigDecimal valor){
-        this.saldo.subtract(valor);
+        this.saldo = this.saldo.subtract(valor);
         //pra onde vai?
     }
     public void transferencia(BigDecimal valor){
-        this.saldo.subtract(valor);
+        this.saldo = this.saldo.subtract(valor);
         //pra onde vai?
     }
     public void extrato(){
@@ -107,6 +118,12 @@ public class Conta {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+
+        return "\nId da conta = " + id + "\nSaldo = " + saldo + "\nConta aberta em = " + dataCriacao + "\nUltima modificação = " + dataModificacao;
     }
     
     

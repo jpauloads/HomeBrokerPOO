@@ -9,6 +9,8 @@ import Entities.Cliente;
 import Entities.Enum.Usuario;
 import javax.swing.JOptionPane;
 import DAO.DAOCliente;
+import Entities.Conta;
+import java.math.BigDecimal;
 
 /**
  *
@@ -76,14 +78,22 @@ public class Interfaces {
             builder.append("\n3- Cadastrar tickets");
             builder.append("\n4- Sair");
         }else{
-            builder.append("\n1- Cadastrar conta");
-            if(cliente.getConta() != null){
-                builder.append("\n2- Comprar");
-                builder.append("\n3- Vender");
-                builder.append("\n4- Operações");
-            }
-            builder.append("\n5- Sair");
-            //Cadastra contas, faz operações de compra e venda e operações na conta.
+            if(cliente.getConta() == null){
+                builder.append("\n1- Cadastrar conta");
+                builder.append("\n2- Sair");
+            }else{
+                builder.append(cliente.getConta());
+                builder.append("\n---------------------------");
+                builder.append("\n1- Depósito");
+                builder.append("\n2- Saque");
+                builder.append("\n3- Pagamento");
+                builder.append("\n4- Transferência");
+                builder.append("\n5- Comprar ativos");
+                builder.append("\n6- Vender ativos");
+                builder.append("\n7- Extrato");
+                builder.append("\n8- Sair");
+
+            }   
         }
         op = Integer.parseInt(JOptionPane.showInputDialog(builder));
         return op;
@@ -96,19 +106,48 @@ public class Interfaces {
         builder.append("\n---------------------------");
         builder.append("\nLogin: ");
         String login = JOptionPane.showInputDialog(builder);
+        builder.append(login);
         builder.append("\nSenha: ");
         String senha = JOptionPane.showInputDialog(builder);
+        builder.append(senha);
         builder.append("\nNome: ");
         String nome = JOptionPane.showInputDialog(builder);
+        builder.append(nome);
         builder.append("\nCPF: ");
         String cpf = JOptionPane.showInputDialog(builder);
+        builder.append(cpf);
         builder.append("\nEndereço: ");
         String endereco = JOptionPane.showInputDialog(builder);
+        builder.append(endereco);
         builder.append("\nTelefone: ");
         String telefone = JOptionPane.showInputDialog(builder);
+        builder.append(telefone);
         builder.append("\nTipo de usuário: ");
         String tipoUsuario = JOptionPane.showInputDialog(builder);
+        builder.append(tipoUsuario);
         
         daoCliente.criarCliente(login, senha, nome, cpf, endereco, telefone, tipoUsuario);
+    }
+    
+    public void cadastrarConta(Cliente cliente){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\nConta criada com sucesso");
+        
+        Conta conta = new Conta();
+        conta.setCliente(cliente);
+        cliente.setConta(conta);
+        
+        JOptionPane.showMessageDialog (null, builder);
+    }
+    
+    
+    public void depositar(Cliente cliente){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\nInsira o valor que deseja depositar");
+        BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
+        
+        cliente.getConta().deposito(valor);
     }
 }

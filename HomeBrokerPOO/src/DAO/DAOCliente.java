@@ -54,6 +54,7 @@ public class DAOCliente {
         comum1.setSenha("321");
         comum1.setTipoUsuario(Usuario.COMUM);
         comum1.setConta(conta);
+        conta.setCliente(comum1);
         
         vetorComum[0] = comum1;
     }

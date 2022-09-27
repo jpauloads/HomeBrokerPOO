@@ -5,9 +5,7 @@
  */
 package Control;
 
-import java.util.Scanner;
 import javax.swing.*;
-import DAO.DAOCliente;
 import Entities.Cliente;
 import Entities.Enum.Usuario;
 import View.Interfaces;
@@ -27,7 +25,6 @@ public class Main {
         int op;
         Cliente cliente;
         Interfaces GUI = new Interfaces();
-        DAOCliente dCliente;
         
         do{ 
             op = GUI.home();
@@ -39,39 +36,100 @@ public class Main {
                     break;
                 }
                 case 2:{
-                    String[] loginSenha = new String[2];
                     cliente = GUI.entrar();
                     
                     if(cliente != null){
                         if(cliente.getTipoUsuario() == Usuario.ADM){
-                            int opAdm = GUI.contaLogada(cliente);
+                            int opAdm;
+                            do{
+                                opAdm = GUI.contaLogada(cliente);
+                                switch(opAdm){
+                                    case 1:{
+                                        GUI.criarClienteTela();
+                                        break;
+                                    }
+                                    case 2:{
+                                        //pagarDividendos
+                                        break;
+                                    }
+                                    case 3:{
+                                        //cadastrarTickets;
+                                        break;
+                                    }
+                                    case 4:{
+                                        break;
+                                    }
+                                    default: {
+                                        JOptionPane.showMessageDialog (null, "Insira um valor válido");
+                                        break;
+                                    }
+                                }
+                            }while(opAdm != 4);
                             
-                            switch(opAdm){
-                                case 1:{
-                                    GUI.criarClienteTela();
-                                    break;
-                                }
-                                case 2:{
-                                    //pagarDividendos
-                                    break;
-                                }
-                                case 3:{
-                                    //cadastrarTickets;
-                                    break;
-                                }
-                                case 4:{
-                                    break;
-                                }
-                                default: {
-                                    JOptionPane.showMessageDialog (null, "Insira um valor válido");
-                                    break;
-                                }
-                            }
                         }else{
-                            int opComum = GUI.contaLogada(cliente);
+                            int opComum;
+                            if(cliente.getConta() == null){
+                                do{
+                                    opComum = GUI.contaLogada(cliente);
+                                    switch(opComum){
+                                        case 1:{
+                                            GUI.cadastrarConta(cliente);
+                                            break;
+                                        }
+                                        case 2:{
+                                            break;
+                                        }
+                                        default: {
+                                            JOptionPane.showMessageDialog (null, "Insira um valor válido");
+                                            break;
+                                        }
+                                    }
+                                }while(opComum != 2);
+                            }else{
+                                do{
+                                    opComum = GUI.contaLogada(cliente);
+                                    switch(opComum){
+                                        case 1:{
+                                            GUI.depositar(cliente);
+                                            break;
+                                        }
+                                        case 2:{
+                                            //Saque
+                                            break;
+                                        }
+                                        case 3:{
+                                            //Pagamento
+                                            break;
+                                        }
+                                        case 4:{
+                                            //Transferência
+                                            break;
+                                        }
+                                        case 5:{
+                                            //Comprar ativos
+                                            break;
+                                        }
+                                        case 6:{
+                                            //Vender ativos
+                                            break;
+                                        }
+                                        case 7:{
+                                            //Extrato
+                                            break;
+                                        }
+                                        case 8:{
+                                            break;
+                                        }
+                                        default: {
+                                            JOptionPane.showMessageDialog (null, "Insira um valor válido");
+                                            break;
+                                        }
+                                    }
+                                }while(opComum != 8);
+                            }
+                            
+                            
                         }
-                        //posso deixar já pre definido as opções
-                        // a parte de intarface é só pra ter noção
                     }else{
                         JOptionPane.showMessageDialog (null, "Credenciais erradas");
                     }
