@@ -47,39 +47,20 @@ public class Conta {
         return dataModificacao;
     }
     
-    public void setId(int id){
-        this.id = id;
-    }
     public void setSaldo(BigDecimal saldo){
         this.saldo = saldo;
+        setDataModificacao(new Date());
     }
     public void setCliente(Cliente cliente){
         this.cliente = cliente;
+        setDataModificacao(new Date());
     }
     public void setDataCriacao(Date dataCriacao){
         this.dataCriacao = dataCriacao;
+        setDataModificacao(new Date());
     }
     public void setDataModificacao(Date dataModificacao){
         this.dataModificacao = dataModificacao;
-    }
-    
-    public void deposito(BigDecimal valor){
-        this.saldo = this.saldo.add(valor);
-    }
-    public void saque(BigDecimal valor){
-        this.saldo = this.saldo.subtract(valor);
-    }
-    public void pagamento(BigDecimal valor){
-        this.saldo = this.saldo.subtract(valor);
-        //pra onde vai?
-    }
-    public void transferencia(BigDecimal valor){
-        this.saldo = this.saldo.subtract(valor);
-        //pra onde vai?
-    }
-    public void extrato(){
-        //O extrato não mostra os valores em ativos alocados
-        //qualé que é?
     }
     
     //O custo de manutenção será de R$20,00 e será debitado todo dia 15.

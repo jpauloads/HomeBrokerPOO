@@ -9,6 +9,7 @@ import Entities.Cliente;
 import Entities.Enum.Usuario;
 import javax.swing.JOptionPane;
 import DAO.DAOCliente;
+import DAO.DAOConta;
 import Entities.Conta;
 import java.math.BigDecimal;
 
@@ -21,11 +22,13 @@ public class Interfaces {
     private int op;
     private StringBuilder builder = new StringBuilder();
     private DAOCliente daoCliente = new DAOCliente();
+    private DAOConta daoConta = new DAOConta();
     private Cliente cliente = new Cliente();
     
     public Interfaces(){
     }
     
+    /* TELAS REFERENTES AO CLIENTE */
     public int home(){
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
@@ -69,7 +72,7 @@ public class Interfaces {
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\nOlá " + cliente.getNome());
-        builder.append("\nTipo de conta: " + cliente.getTipoUsuario());
+        builder.append("\nTipo de cliente: " + cliente.getTipoUsuario());
         builder.append("\nOpções");
         builder.append("\n---------------------------");
         if(cliente.getTipoUsuario() == Usuario.ADM){
@@ -142,12 +145,51 @@ public class Interfaces {
     }
     
     
+    /* TELAS REFERENTES A OPERAÇÕES DE CONTA */
     public void depositar(Cliente cliente){
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\nInsira o valor que deseja depositar");
         BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
         
-        cliente.getConta().deposito(valor);
+        daoConta.depositar(cliente, valor);
     }
+    
+    public void sacar(Cliente cliente){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\nInsira o valor que sacar depositar");
+        BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
+        
+        daoConta.sacar(cliente, valor);
+    }
+    
+    public void pagar(Cliente cliente){
+        
+    }
+    
+    public void transferir(Cliente cliente){
+        Cliente[] vetorComum = daoCliente.getVetorComum();
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\nQuanto deseja transferir");
+        BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
+        builder.append("\nInsira o id da conta para qual deseja transferir");
+        int idConta = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        builder.append(idConta);
+        
+        for(int i = 0; i < vetorComum.length; i++){
+            if((vetorComum[i] != null) && (idConta == vetorComum[i].getConta().getId())){
+                builder.append("\nOs dados conferem? [1- Sim, 2- Não]");
+                builder.append(vetorComum[i].getConta());
+                int confirmar = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                if(confirmar == 1){
+                    daoConta.transferir(cliente, valor, vetorComum[i]);
+                    JOptionPane.showMessageDialog (null, "Transferencia realizada com sucesso");
+                }
+            }
+        }
+        
+    }
+    
 }

@@ -44,6 +44,7 @@ public class DAOCliente {
         vetorAdm[0] = adm1;
         vetorAdm[1] = adm2;
         vetorAdm[2] = adm3;
+        
         Conta conta = new Conta();
         Cliente comum1 = new Cliente();
         comum1.setCpf("24520690005");
@@ -56,8 +57,53 @@ public class DAOCliente {
         comum1.setConta(conta);
         conta.setCliente(comum1);
         
+        Conta conta2 = new Conta();
+        Cliente comum2 = new Cliente();
+        comum2.setCpf("24520690005");
+        comum2.setEndereco("Se essa rua fosse minha, 450");
+        comum2.setLogin("comum2");
+        comum2.setNome("Jojo Todyson");
+        comum2.setTelefone("84933821382");
+        comum2.setSenha("321");
+        comum2.setTipoUsuario(Usuario.COMUM);
+        comum2.setConta(conta2);
+        conta2.setCliente(comum2);
+        
+        Conta conta3 = new Conta();
+        Cliente comum3 = new Cliente();
+        comum3.setCpf("4123");
+        comum3.setEndereco("Se essa rua fsosse minha, 450");
+        comum3.setLogin("comum3");
+        comum3.setNome("Jojo Todyson");
+        comum3.setTelefone("84933821382");
+        comum3.setSenha("321");
+        comum3.setTipoUsuario(Usuario.COMUM);
+        comum3.setConta(conta3);
+        conta3.setCliente(comum3);
+        
         vetorComum[0] = comum1;
+        vetorComum[1] = comum2;
+        vetorComum[2] = comum3;
     }
+
+    public Cliente[] getVetorAdm() {
+        return vetorAdm;
+    }
+
+    public Cliente[] getVetorComum() {
+        return vetorComum;
+    }
+
+    public void setVetorAdm(Cliente[] vetorAdm) {
+        this.vetorAdm = vetorAdm;
+    }
+
+    public void setVetorComum(Cliente[] vetorComum) {
+        this.vetorComum = vetorComum;
+    }
+    
+    
+    
     
     public Cliente validarLogin(String[] loginSenha){
         

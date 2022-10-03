@@ -107,6 +107,9 @@ public class Ativos {
         }
         return true;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Ativos{" + "id=" + id + ", totalAtivos=" + totalAtivos + ", precoInicial=" + precoInicial + ", nomeEmpresa=" + nomeEmpresa + ", ticker=" + ticker + ", dataCriacao=" + dataCriacao + ", dataModificacao=" + dataModificacao + '}';
+    }
 }

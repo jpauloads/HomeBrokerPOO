@@ -69,6 +69,7 @@ public class Main {
                         }else{
                             int opComum;
                             if(cliente.getConta() == null){
+                                //bug aqui
                                 do{
                                     opComum = GUI.contaLogada(cliente);
                                     switch(opComum){
@@ -84,7 +85,7 @@ public class Main {
                                             break;
                                         }
                                     }
-                                }while(opComum != 2);
+                                }while(opComum != 2 || cliente.getConta() != null);
                             }else{
                                 do{
                                     opComum = GUI.contaLogada(cliente);
@@ -94,7 +95,7 @@ public class Main {
                                             break;
                                         }
                                         case 2:{
-                                            //Saque
+                                            GUI.sacar(cliente);
                                             break;
                                         }
                                         case 3:{
@@ -102,7 +103,7 @@ public class Main {
                                             break;
                                         }
                                         case 4:{
-                                            //Transferência
+                                            GUI.transferir(cliente);
                                             break;
                                         }
                                         case 5:{

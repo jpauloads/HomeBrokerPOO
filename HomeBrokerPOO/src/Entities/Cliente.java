@@ -64,30 +64,39 @@ public class Cliente {
     
     public void setCpf(String cpf) {
         this.cpf = cpf;
+        setDataModificacao(new Date());
     }
     public void setEndereco(String endereco){
         this.endereco = endereco;
+        setDataModificacao(new Date());
     }
     public void setLogin(String login){
         this.login = login;
+        setDataModificacao(new Date());
     }
     public void setNome(String nome){
         this.nome = nome;
+        setDataModificacao(new Date());
     }
     public void setTelefone(String telefone){
         this.telefone = telefone;
+        setDataModificacao(new Date());
     }
     public void setSenha(String senha){
         this.senha = senha;
+        setDataModificacao(new Date());
     }
     public void setConta(Conta conta){
         this.conta = conta;
+        setDataModificacao(new Date());
     }
     public void setTipoUsuario(Usuario tipoUsuario){
         this.tipoUsuario = tipoUsuario;
+        setDataModificacao(new Date());
     }
     public void setDataCriacao(Date dataCriacao){
         this.dataCriacao = dataCriacao;
+        setDataModificacao(new Date());
     }
     public void setDataModificacao(Date dataModificacao){
         this.dataModificacao = dataModificacao;
