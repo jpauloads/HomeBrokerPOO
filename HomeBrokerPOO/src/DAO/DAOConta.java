@@ -25,14 +25,14 @@ public class DAOConta {
         cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
     }
     
-    public void transferir(Cliente cliente, BigDecimal valor, Cliente clienteFinal){
-        System.out.println("transfer: " + clienteFinal);
-        cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
+    public void transferir(Cliente clienteInicial, BigDecimal valor, Cliente clienteFinal){
+        clienteInicial.getConta().setSaldo(clienteInicial.getConta().getSaldo().subtract(valor));
         clienteFinal.getConta().setSaldo(clienteFinal.getConta().getSaldo().add(valor));
     }
     
-    public void comprarAtivos(Cliente cliente, BigDecimal valor){
+    public void comprarAtivos(Cliente cliente, BigDecimal valor, int idAtivo){
         cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
+        
     }
     
     public void venderAtivos(Cliente cliente, BigDecimal valor){

@@ -14,6 +14,7 @@ import java.util.Objects;
  * @author jp_te
  */
 public class Ativos {
+    private static int nextId;
     private int id;
     private int totalAtivos;
     private BigDecimal precoInicial;
@@ -21,6 +22,11 @@ public class Ativos {
     private String ticker;
     private Date dataCriacao;
     private Date dataModificacao;
+    
+    public Ativos(){
+        this.id = nextId++;
+        this.dataCriacao = new Date();
+    }
     
     public int getId(){
         return id;
@@ -44,23 +50,26 @@ public class Ativos {
         return dataModificacao;
     }
     
-    public void setId(int id){
-        this.id = id;
-    }
+
     public void setTotalAtivos(int totalAtivos){
         this.totalAtivos = totalAtivos;
+        setDataModificacao(new Date());
     }
     public void setPrecoInicial(BigDecimal precoInicial){
         this.precoInicial = precoInicial;
+        setDataModificacao(new Date());
     }
     public void setNomeEmpresa(String nomeEmpresa){
         this.nomeEmpresa = nomeEmpresa;
+        setDataModificacao(new Date());
     }
     public void setTicker(String ticker){
         this.ticker = ticker;
+        setDataModificacao(new Date());
     }
     public void setDataCriacao(Date dataCriacao){
         this.dataCriacao = dataCriacao;
+        setDataModificacao(new Date());
     }
     public void setDataModificacao(Date dataModificacao){
         this.dataModificacao = dataModificacao;
@@ -110,6 +119,6 @@ public class Ativos {
 
     @Override
     public String toString() {
-        return "Ativos{" + "id=" + id + ", totalAtivos=" + totalAtivos + ", precoInicial=" + precoInicial + ", nomeEmpresa=" + nomeEmpresa + ", ticker=" + ticker + ", dataCriacao=" + dataCriacao + ", dataModificacao=" + dataModificacao + '}';
+        return "Id do ativo = " + id + "\nEmpresa = " + nomeEmpresa + "\nTicker = " + ticker + "\nPreço = " + precoInicial + "\nTotal de ativos disponíveis = " + totalAtivos;
     }
 }

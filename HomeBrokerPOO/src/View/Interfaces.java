@@ -10,6 +10,8 @@ import Entities.Enum.Usuario;
 import javax.swing.JOptionPane;
 import DAO.DAOCliente;
 import DAO.DAOConta;
+import DAO.DAOAtivos;
+import Entities.Ativos;
 import Entities.Conta;
 import java.math.BigDecimal;
 
@@ -23,6 +25,7 @@ public class Interfaces {
     private StringBuilder builder = new StringBuilder();
     private DAOCliente daoCliente = new DAOCliente();
     private DAOConta daoConta = new DAOConta();
+    private DAOAtivos daoAtivos = new DAOAtivos();
     private Cliente cliente = new Cliente();
     
     public Interfaces(){
@@ -105,7 +108,7 @@ public class Interfaces {
     public void criarClienteTela(){
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
-        builder.append("\nCriar Cliente");
+        builder.append("\n| Cadastro de Cliente |");
         builder.append("\n---------------------------");
         builder.append("\nLogin: ");
         String login = JOptionPane.showInputDialog(builder);
@@ -189,7 +192,43 @@ public class Interfaces {
                 }
             }
         }
-        
     }
     
+    /* Telas de ativos */
+    public void cadastrarAtivos(){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("| Cadastro de Ativos |");
+        builder.append("\n---------------------------");
+        builder.append("\nNome da empresa");
+        String nomeEmpresa = JOptionPane.showInputDialog(builder);
+        builder.append("\nTicker");
+        String ticker = JOptionPane.showInputDialog(builder);
+        builder.append("\nTotal de ativos");
+        int totalAtivos = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        builder.append("\nPreço inicial");
+        BigDecimal precoInicial = new BigDecimal(JOptionPane.showInputDialog(builder));
+        
+        daoAtivos.criarAtivos(nomeEmpresa, ticker, precoInicial, totalAtivos);
+    }
+    
+    public void comprarAtivos(Cliente cliente){
+        Ativos[] vetorAtivos = daoAtivos.getAtivos();
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\n| Compra de Ativos |");
+        builder.append("\n---------------------------");
+        for(int i = 0; i < vetorAtivos.length; i++){
+            if(vetorAtivos[i] != null){
+                builder.append("\n" + vetorAtivos[i]);
+                builder.append("\n");
+            }
+        }
+        builder.append("\nInsira o ID do ativo que deseja comprar: ");
+        int ativo = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        builder.append(ativo);
+        builder.append("\nQuantos ativos deseja comprar: ");
+        int numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        builder.append(numAtivo);
+    }
 }

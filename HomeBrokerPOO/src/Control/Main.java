@@ -53,7 +53,7 @@ public class Main {
                                         break;
                                     }
                                     case 3:{
-                                        //cadastrarTickets;
+                                        GUI.cadastrarAtivos();
                                         break;
                                     }
                                     case 4:{
@@ -69,7 +69,6 @@ public class Main {
                         }else{
                             int opComum;
                             if(cliente.getConta() == null){
-                                //bug aqui
                                 do{
                                     opComum = GUI.contaLogada(cliente);
                                     switch(opComum){
@@ -107,7 +106,7 @@ public class Main {
                                             break;
                                         }
                                         case 5:{
-                                            //Comprar ativos
+                                            GUI.comprarAtivos(cliente);
                                             break;
                                         }
                                         case 6:{

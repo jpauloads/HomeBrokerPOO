@@ -59,7 +59,7 @@ public class Conta {
         this.dataCriacao = dataCriacao;
         setDataModificacao(new Date());
     }
-    public void setDataModificacao(Date dataModificacao){
+    private void setDataModificacao(Date dataModificacao){
         this.dataModificacao = dataModificacao;
     }
     
