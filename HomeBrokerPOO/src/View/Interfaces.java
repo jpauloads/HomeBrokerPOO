@@ -35,25 +35,11 @@ public class Interfaces {
     public int home(){
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
-        builder.append("\n1 - Criar conta");
-        builder.append("\n2 - Entrar");
-        builder.append("\n3 - Sobre");
-        builder.append("\n4 - Sair");
+        builder.append("\n1 - Entrar");
+        builder.append("\n2 - Sobre");
+        builder.append("\n3 - Sair");
         op = Integer.parseInt(JOptionPane.showInputDialog(builder));
         return op;
-    }
-    
-    public String[] criar(){
-        String[] loginSenha = new String[2];
-        builder.delete(0, builder.length());
-        builder.append("HOME BROKER JJ");
-        builder.append("\nCriar login: ");
-        loginSenha[0] = JOptionPane.showInputDialog(builder);
-        builder.append(loginSenha[0]);
-        builder.append("\nCriar senha: ");
-        loginSenha[1] = JOptionPane.showInputDialog(builder);
-        
-        return loginSenha;
     }
     
     public Cliente entrar(){
@@ -168,6 +154,11 @@ public class Interfaces {
     }
     
     public void pagar(Cliente cliente){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\nQuanto é o valor do pagamento");
+        BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
+        
         
     }
     
@@ -198,22 +189,27 @@ public class Interfaces {
     public void cadastrarAtivos(){
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
-        builder.append("| Cadastro de Ativos |");
+        builder.append("\n| Cadastro de Ativos |");
         builder.append("\n---------------------------");
-        builder.append("\nNome da empresa");
+        builder.append("\nNome da empresa: ");
         String nomeEmpresa = JOptionPane.showInputDialog(builder);
-        builder.append("\nTicker");
+        builder.append(nomeEmpresa);
+        builder.append("\nTicker: ");
         String ticker = JOptionPane.showInputDialog(builder);
-        builder.append("\nTotal de ativos");
+        builder.append(ticker);
+        builder.append("\nTotal de ativos: ");
         int totalAtivos = Integer.parseInt(JOptionPane.showInputDialog(builder));
-        builder.append("\nPreço inicial");
+        builder.append(totalAtivos);
+        builder.append("\nPreço inicial: ");
         BigDecimal precoInicial = new BigDecimal(JOptionPane.showInputDialog(builder));
+        builder.append(precoInicial);
         
         daoAtivos.criarAtivos(nomeEmpresa, ticker, precoInicial, totalAtivos);
     }
     
     public void comprarAtivos(Cliente cliente){
         Ativos[] vetorAtivos = daoAtivos.getAtivos();
+        Ativos ativoEscolhido = null;
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\n| Compra de Ativos |");
@@ -225,10 +221,18 @@ public class Interfaces {
             }
         }
         builder.append("\nInsira o ID do ativo que deseja comprar: ");
-        int ativo = Integer.parseInt(JOptionPane.showInputDialog(builder));
-        builder.append(ativo);
+        int ativoId = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        for(int i = 0; i < vetorAtivos.length; i++){
+            if(vetorAtivos[i] != null && vetorAtivos[i].getId() == ativoId){
+                ativoEscolhido = vetorAtivos[i];
+                break;
+            }
+        }
+        builder.append(ativoId);
         builder.append("\nQuantos ativos deseja comprar: ");
-        int numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        String numAtivo = JOptionPane.showInputDialog(builder);
         builder.append(numAtivo);
+        
+        daoConta.comprarAtivos(cliente, ativoEscolhido, numAtivo);
     }
 }

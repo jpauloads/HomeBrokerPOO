@@ -1,5 +1,6 @@
 package DAO;
 
+import Entities.Ativos;
 import Entities.Cliente;
 
 import java.math.BigDecimal;
@@ -30,9 +31,13 @@ public class DAOConta {
         clienteFinal.getConta().setSaldo(clienteFinal.getConta().getSaldo().add(valor));
     }
     
-    public void comprarAtivos(Cliente cliente, BigDecimal valor, int idAtivo){
+    public void comprarAtivos(Cliente cliente, Ativos ativo, String numAtivos){
+        
+        BigDecimal valor = ativo.getPrecoInicial().multiply(new BigDecimal(numAtivos));
+        
         cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
         
+        ativo.setTotalAtivos(ativo.getTotalAtivos() - Integer.parseInt(numAtivos));
     }
     
     public void venderAtivos(Cliente cliente, BigDecimal valor){

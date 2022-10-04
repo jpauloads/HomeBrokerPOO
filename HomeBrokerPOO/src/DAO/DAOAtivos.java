@@ -53,7 +53,7 @@ public class DAOAtivos {
         ativo.setPrecoInicial(precoInicial);
         
         for(int i = 0; i < ativos.length; i++){
-            if(ativos[i] != null){
+            if(ativos[i] == null){
                 ativos[i] = ativo;
                 break;
             }

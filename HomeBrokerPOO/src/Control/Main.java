@@ -31,11 +31,6 @@ public class Main {
             
             switch(op){
                 case 1:{
-                    String[] loginSenha = new String[2];
-                    loginSenha = GUI.criar();
-                    break;
-                }
-                case 2:{
                     cliente = GUI.entrar();
                     
                     if(cliente != null){
@@ -135,11 +130,11 @@ public class Main {
                     }
                     break;
                 }
-                case 3:{
+                case 2:{
                     JOptionPane.showMessageDialog (null, "Um home broker bem broker e ainda mais home");
                     break;
                 }
-                case 4:{
+                case 3:{
                     break;
                 }
                 default:{
@@ -147,7 +142,7 @@ public class Main {
                     break;
                 }
             }
-        }while(op != 4);
+        }while(op != 3);
     }
     
 }
