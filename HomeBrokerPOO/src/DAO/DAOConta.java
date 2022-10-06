@@ -22,8 +22,9 @@ public class DAOConta {
         cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
     }
     
-    public void pagar(Cliente cliente, BigDecimal valor){
+    public void pagar(Cliente cliente, BigDecimal valor, Cliente adm){
         cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
+        adm.getConta().setSaldo(adm.getConta().getSaldo().add(valor));
     }
     
     public void transferir(Cliente clienteInicial, BigDecimal valor, Cliente clienteFinal){
@@ -42,6 +43,10 @@ public class DAOConta {
     
     public void venderAtivos(Cliente cliente, BigDecimal valor){
         cliente.getConta().setSaldo(cliente.getConta().getSaldo().subtract(valor));
+    }
+    
+    public void pagarDividendos(Cliente cliente){
+        
     }
     
     public void extrato(){

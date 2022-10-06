@@ -30,7 +30,7 @@ public class Interfaces {
     
     public Interfaces(){
     }
-    
+    //JOptionPane.yes_no_option
     /* TELAS REFERENTES AO CLIENTE */
     public int home(){
         builder.delete(0, builder.length());
@@ -65,6 +65,9 @@ public class Interfaces {
         builder.append("\nOpções");
         builder.append("\n---------------------------");
         if(cliente.getTipoUsuario() == Usuario.ADM){
+            if(cliente.getTipoUsuario() == Usuario.ADM && cliente.getId() == 0){
+                builder.append("\nSaldo da bolsa = " + cliente.getConta().getSaldo());
+            }
             builder.append("\n1- Criar novo cliente");
             builder.append("\n2- Pagar dividendos");
             builder.append("\n3- Cadastrar tickets");
@@ -80,10 +83,9 @@ public class Interfaces {
                 builder.append("\n2- Saque");
                 builder.append("\n3- Pagamento");
                 builder.append("\n4- Transferência");
-                builder.append("\n5- Comprar ativos");
-                builder.append("\n6- Vender ativos");
-                builder.append("\n7- Extrato");
-                builder.append("\n8- Sair");
+                builder.append("\n5- Abrir book de ofertas");
+                builder.append("\n6- Extrato");
+                builder.append("\n7- Sair");
 
             }   
         }
@@ -154,12 +156,13 @@ public class Interfaces {
     }
     
     public void pagar(Cliente cliente){
+        Cliente[] adm = daoCliente.getVetorAdm();
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\nQuanto é o valor do pagamento");
         BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
         
-        
+        daoConta.pagar(cliente, valor, adm[0]);
     }
     
     public void transferir(Cliente cliente){
@@ -174,15 +177,36 @@ public class Interfaces {
         
         for(int i = 0; i < vetorComum.length; i++){
             if((vetorComum[i] != null) && (idConta == vetorComum[i].getConta().getId())){
-                builder.append("\nOs dados conferem? [1- Sim, 2- Não]");
-                builder.append(vetorComum[i].getConta());
-                int confirmar = Integer.parseInt(JOptionPane.showInputDialog(builder));
-                if(confirmar == 1){
-                    daoConta.transferir(cliente, valor, vetorComum[i]);
-                    JOptionPane.showMessageDialog (null, "Transferencia realizada com sucesso");
+                if(idConta == cliente.getConta().getId()){
+                    JOptionPane.showMessageDialog (null, "Não é possível transferir para a própria conta");
+                }else{
+                    builder.append("\nOs dados conferem? [1- Sim, 2- Não]");
+                    builder.append(vetorComum[i].getConta());
+                    int confirmar = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    if(confirmar == 1){
+                        daoConta.transferir(cliente, valor, vetorComum[i]);
+                        JOptionPane.showMessageDialog (null, "Transferencia realizada com sucesso");
+                    }
                 }
             }
         }
+    }
+    
+    public void pagarDividendos(Cliente cliente){
+        Cliente[] vetorComum = daoCliente.getVetorComum();
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\nDeseja executar agora o pagamento de dividendos?");
+        int yesNo = JOptionPane.showConfirmDialog (null,"\nDeseja executar agora o pagamento de dividendos?", "HOME BROKER JJ", JOptionPane.YES_NO_OPTION);
+        
+        if(yesNo == 0){
+            daoConta.pagarDividendos(cliente);
+        }
+        
+    }
+    
+    public void extrato(Cliente cliente){
+        
     }
     
     /* Telas de ativos */
@@ -207,6 +231,9 @@ public class Interfaces {
         daoAtivos.criarAtivos(nomeEmpresa, ticker, precoInicial, totalAtivos);
     }
     
+    
+    
+    /*STANDBY*/
     public void comprarAtivos(Cliente cliente){
         Ativos[] vetorAtivos = daoAtivos.getAtivos();
         Ativos ativoEscolhido = null;

@@ -14,6 +14,7 @@ public class DAOCliente {
     
     public DAOCliente(){
         //Criação do cliente adm padrão
+        Conta contaAdm = new Conta();
         Cliente adm1 = new Cliente();
         adm1.setCpf("95550664003");
         adm1.setEndereco("Rua dos Bobos, 0");
@@ -22,6 +23,8 @@ public class DAOCliente {
         adm1.setTelefone("34987641029");
         adm1.setSenha("123");
         adm1.setTipoUsuario(Usuario.ADM);
+        adm1.setConta(contaAdm);
+        contaAdm.setCliente(adm1);
         
         Cliente adm2 = new Cliente();
         adm2.setCpf("72510999001");
@@ -69,7 +72,7 @@ public class DAOCliente {
         comum2.setConta(conta2);
         conta2.setCliente(comum2);
         
-        Conta conta3 = new Conta();
+        //Conta conta3 = new Conta();
         Cliente comum3 = new Cliente();
         comum3.setCpf("4123");
         comum3.setEndereco("Se essa rua fsosse minha, 450");
@@ -78,8 +81,8 @@ public class DAOCliente {
         comum3.setTelefone("84933821382");
         comum3.setSenha("321");
         comum3.setTipoUsuario(Usuario.COMUM);
-        comum3.setConta(conta3);
-        conta3.setCliente(comum3);
+        //comum3.setConta(conta3);
+        //conta3.setCliente(comum3);
         
         vetorComum[0] = comum1;
         vetorComum[1] = comum2;
@@ -93,17 +96,6 @@ public class DAOCliente {
     public Cliente[] getVetorComum() {
         return vetorComum;
     }
-
-    public void setVetorAdm(Cliente[] vetorAdm) {
-        this.vetorAdm = vetorAdm;
-    }
-
-    public void setVetorComum(Cliente[] vetorComum) {
-        this.vetorComum = vetorComum;
-    }
-    
-    
-    
     
     public Cliente validarLogin(String[] loginSenha){
         

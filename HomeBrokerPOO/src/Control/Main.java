@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Control;
 
 import javax.swing.*;
@@ -44,7 +39,7 @@ public class Main {
                                         break;
                                     }
                                     case 2:{
-                                        //pagarDividendos
+                                        GUI.pagarDividendos(cliente);
                                         break;
                                     }
                                     case 3:{
@@ -79,8 +74,13 @@ public class Main {
                                             break;
                                         }
                                     }
-                                }while(opComum != 2 || cliente.getConta() != null);
-                            }else{
+                                    if(cliente.getConta() != null){
+                                        opComum = 2;
+                                    }
+                                }while(opComum != 2);
+                            }
+                            
+                            if(cliente.getConta() != null){
                                 do{
                                     opComum = GUI.contaLogada(cliente);
                                     switch(opComum){
@@ -93,7 +93,7 @@ public class Main {
                                             break;
                                         }
                                         case 3:{
-                                            //Pagamento
+                                            GUI.pagar(cliente);
                                             break;
                                         }
                                         case 4:{
@@ -105,14 +105,10 @@ public class Main {
                                             break;
                                         }
                                         case 6:{
-                                            //Vender ativos
+                                            GUI.extrato(cliente);
                                             break;
                                         }
                                         case 7:{
-                                            //Extrato
-                                            break;
-                                        }
-                                        case 8:{
                                             break;
                                         }
                                         default: {
@@ -120,11 +116,10 @@ public class Main {
                                             break;
                                         }
                                     }
-                                }while(opComum != 8);
+                                }while(opComum != 7);
                             }
-                            
-                            
                         }
+
                     }else{
                         JOptionPane.showMessageDialog (null, "Credenciais erradas");
                     }
@@ -144,5 +139,4 @@ public class Main {
             }
         }while(op != 3);
     }
-    
 }
