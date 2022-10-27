@@ -11,9 +11,13 @@ import javax.swing.JOptionPane;
 import DAO.DAOCliente;
 import DAO.DAOConta;
 import DAO.DAOAtivos;
+import DAO.DAOMovimentacao;
 import Entities.Ativos;
 import Entities.Conta;
+import Entities.Enum.Operacao;
+import Entities.Movimentacao;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  *
@@ -27,6 +31,8 @@ public class Interfaces {
     private DAOConta daoConta = new DAOConta();
     private DAOAtivos daoAtivos = new DAOAtivos();
     private Cliente cliente = new Cliente();
+    
+    private DAOMovimentacao daoMovimentacao = new DAOMovimentacao();
     
     public Interfaces(){
     }
@@ -137,24 +143,49 @@ public class Interfaces {
     
     
     /* TELAS REFERENTES A OPERAÇÕES DE CONTA */
+    //deposito
     public void depositar(Cliente cliente){
+        Movimentacao nova = new Movimentacao();
+        Date agora = new Date();
+                
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\nInsira o valor que deseja depositar");
         BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
+        builder.append("\nDescricao: ");
+        String descricao = JOptionPane.showInputDialog(builder);
+        
+        nova.setOperacao(Operacao.DEBITO);
+        nova.setValor(valor);
+        nova.setDataModificacao(agora);
+        nova.setDescricao(descricao);
         
         daoConta.depositar(cliente, valor);
+        daoMovimentacao.criar(nova);
     }
     
+    //saque
     public void sacar(Cliente cliente){
+        Movimentacao nova = new Movimentacao();
+        Date agora = new Date();
+        
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\nInsira o valor que sacar depositar");
         BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
+        builder.append("\nDescricao: ");
+        String descricao = JOptionPane.showInputDialog(builder);
         
+        nova.setOperacao(Operacao.DEBITO);
+        nova.setValor(valor);
+        nova.setDataModificacao(agora);
+        nova.setDescricao(descricao);
+  
         daoConta.sacar(cliente, valor);
+        daoMovimentacao.criar(nova);
     }
     
+    //pagamento
     public void pagar(Cliente cliente){
         Cliente[] adm = daoCliente.getVetorAdm();
         builder.delete(0, builder.length());
@@ -162,11 +193,14 @@ public class Interfaces {
         builder.append("\nQuanto é o valor do pagamento");
         BigDecimal valor = new BigDecimal(JOptionPane.showInputDialog(builder));
         
+        //colocar tbm o daoMovimentacao
         daoConta.pagar(cliente, valor, adm[0]);
     }
     
+    //transferencia
     public void transferir(Cliente cliente){
         Cliente[] vetorComum = daoCliente.getVetorComum();
+                
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
         builder.append("\nQuanto deseja transferir");
@@ -183,8 +217,24 @@ public class Interfaces {
                     builder.append("\nOs dados conferem? [1- Sim, 2- Não]");
                     builder.append(vetorComum[i].getConta());
                     int confirmar = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    
                     if(confirmar == 1){
+                        
+                        Movimentacao nova = new Movimentacao();
+                        Date agora = new Date();
+                        builder.append("\nDescricao: ");
+                        String descricao = JOptionPane.showInputDialog(builder);
+                        
                         daoConta.transferir(cliente, valor, vetorComum[i]);
+                        
+                        nova.setOperacao(Operacao.DEBITO);
+                        nova.setContaOrigem(cliente.getConta());
+                        nova.setContaDestino(vetorComum[i].getConta());
+                        nova.setDataModificacao(agora);
+                        nova.setDescricao(descricao);
+                        nova.setValor(valor);
+                        
+                        daoMovimentacao.criar(nova);
                         JOptionPane.showMessageDialog (null, "Transferencia realizada com sucesso");
                     }
                 }
@@ -205,7 +255,18 @@ public class Interfaces {
         
     }
     
-    public void extrato(Cliente cliente){
+    //FALTA TERMINAR
+    public void gerarExtrato(Cliente cliente){
+        //para gerar o extrato precisa-se estar logado na conta cliente
+                
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\n| Extrato |");
+        builder.append("\n---------------------------");
+        //extrato da conta que está logada
+        builder.append(daoMovimentacao.ler(cliente.getConta()));
+        
+        
         
     }
     

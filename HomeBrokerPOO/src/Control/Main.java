@@ -105,7 +105,8 @@ public class Main {
                                             break;
                                         }
                                         case 6:{
-                                            GUI.extrato(cliente);
+                                            //FALTA TERMINAR
+                                            GUI.gerarExtrato(cliente);
                                             break;
                                         }
                                         case 7:{

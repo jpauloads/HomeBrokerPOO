@@ -12,28 +12,34 @@ import java.util.Objects;
 
 /**
  *
- * @author jp_te
+ * @author jJPGF
  */
 public class Movimentacao {
-    private int id;
+    private static int serial;
+    private final int id;
     private BigDecimal valor;
     private Conta conta;
-    private Operacao operacao;
+    private Conta contaDestino;
+    private Operacao tipoOperacao;
     private String descricao;
     private Date dataCriacao;
     private Date dataModificacao;
     
-    public int getId(){
-        return id;
+    public Movimentacao(){
+        this.id = ++Movimentacao.serial;
     }
+    
     public BigDecimal getValor(){
         return valor;
     }
-    public Conta getConta(){
+    public Conta getContaOrigem(){
         return conta;
     }
+    public Conta getContaDestino(){
+        return contaDestino;
+    }
     public Operacao getOperacao(){
-        return operacao;
+        return tipoOperacao;
     }
     public String getDescricao(){
         return descricao;
@@ -45,17 +51,18 @@ public class Movimentacao {
         return dataModificacao;
     }
     
-    public void setId(int id){
-        this.id = id;
-    }
+
     public void setValor(BigDecimal valor){
         this.valor = valor;
     }
-    public void setConta(Conta conta){
+    public void setContaOrigem(Conta conta){
         this.conta = conta;
     }
-    public void setOperacao(Operacao operacao){
-        this.operacao = operacao;
+    public void setContaDestino(Conta contaDestino){
+        this.contaDestino = contaDestino;
+    }
+    public void setOperacao(Operacao tipoOperacao){
+        this.tipoOperacao = tipoOperacao;
     }
     public void setDescricao(String descricao){
         this.descricao = descricao;
@@ -70,6 +77,13 @@ public class Movimentacao {
     @Override
     public int hashCode() {
         int hash = 3;
+        hash = 89 * hash + this.id;
+        hash = 89 * hash + Objects.hashCode(this.valor);
+        hash = 89 * hash + Objects.hashCode(this.conta);
+        hash = 89 * hash + Objects.hashCode(this.tipoOperacao);
+        hash = 89 * hash + Objects.hashCode(this.descricao);
+        hash = 89 * hash + Objects.hashCode(this.dataCriacao);
+        hash = 89 * hash + Objects.hashCode(this.dataModificacao);
         return hash;
     }
 
@@ -97,7 +111,7 @@ public class Movimentacao {
         if (!Objects.equals(this.conta, other.conta)) {
             return false;
         }
-        if (this.operacao != other.operacao) {
+        if (this.tipoOperacao != other.tipoOperacao) {
             return false;
         }
         if (!Objects.equals(this.dataCriacao, other.dataCriacao)) {
@@ -108,6 +122,16 @@ public class Movimentacao {
         }
         return true;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Movimentacao: \n" +"Id: " + id + 
+               "\nValor: " + valor + 
+               "\nConta: " + conta + 
+               "\nConta Destino: " + contaDestino + 
+               "\nOperacao: " + tipoOperacao + 
+               "\nDescricao: " + descricao + 
+               "\nData de Modificacao: " + dataModificacao + "\n";
+    }
+       
 }

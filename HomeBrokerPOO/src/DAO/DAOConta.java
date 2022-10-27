@@ -47,10 +47,6 @@ public class DAOConta {
     
     public void pagarDividendos(Cliente cliente){
         
-    }
-    
-    public void extrato(){
-        
-    }
+    }  
     
 }
