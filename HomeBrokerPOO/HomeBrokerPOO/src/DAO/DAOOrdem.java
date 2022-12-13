@@ -5,15 +5,27 @@
  */
 package DAO;
 
+import Connection.ConnectionFactory;
 import Entities.Ativos;
 import Entities.Cliente;
 import Entities.Conta;
 import Entities.Ordem;
 import Entities.Enum.Estado;
+import Entities.Enum.Operacao;
 import Entities.Enum.TipoOrdem;
+import Entities.Movimentacao;
 import Entities.OrdemExecucao;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -21,28 +33,96 @@ import java.util.Date;
  */
 public class DAOOrdem {
     
-    private Ordem[] vetorOrdem = new Ordem[50];
+    private Connection connection = null;
     
     public DAOOrdem(){
+        this.connection = new ConnectionFactory().getConnection();
     }
     
-    public Ordem[] getVetOrdem(){
-        return vetorOrdem;
-    }
-    
-    public int proximaPosicaoLivre(){
-        for (int i = 0; i < vetorOrdem.length; i++) {
-            if(vetorOrdem[i] == null){
-                return i;
-            }         
+    public void criarOrdem(int idConta, String tipoOrdem, String ticker, int quantidade, String estado, 
+            BigDecimal valor, BigDecimal valorTotal){
+        String sql = "insert into ordem "
+                + "(id_conta, tipo_ordem, ticker, quantidade, estado, valor, valor_total, data_criacao, data_alteracao)" 
+                + " values (?,?,?,?,?,?,?,?,?)";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql);){
+            stmt.setInt(1, idConta);
+            stmt.setString(2, tipoOrdem);
+            stmt.setString(3, ticker);
+            stmt.setInt(4, quantidade);
+            stmt.setString(5, estado);
+            stmt.setDouble(6, valor.doubleValue());
+            stmt.setDouble(7, valorTotal.doubleValue());
+            stmt.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setTimestamp(9, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.execute();
+
+            System.out.println("Ordem inserida com sucesso.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return -1;
     }
     
-    public void adicionaVetOrdem(Ordem ordem){
-        vetorOrdem[proximaPosicaoLivre()] = ordem;
+        public List<Ordem> listaOrdem(){
+        List<Ordem> ordens = new ArrayList<>();
+        
+        String sql = "select * from ordem";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+                ResultSet resultQuery = stmt.executeQuery();){           
+
+            while (resultQuery.next()) {
+                int id = resultQuery.getInt("id");
+                //int idConta = resultQuery.getInt("id_conta");
+                String tipoOrdem = resultQuery.getString("tipo_ordem");
+                String ticker = resultQuery.getString("id_ticker");
+                int quantidade = resultQuery.getInt("quantidade");
+                String estado = resultQuery.getString("estado");
+                BigDecimal valor = BigDecimal.valueOf(resultQuery.getDouble("valor"));
+                BigDecimal valorTotal = BigDecimal.valueOf(resultQuery.getDouble("valor_total"));
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss.S");
+                LocalDateTime dataCriacao = LocalDateTime.parse(resultQuery.getTimestamp("data_criacao").toString(), formatter);
+                LocalDateTime dataAlteracao = LocalDateTime.parse(resultQuery.getTimestamp("data_alteracao").toString(), formatter);
+
+                Ordem ordemResult = new Ordem();
+                ordemResult.setId(id);
+                
+                ordemResult.setId(id);
+                //tem q buscar a conta pra setar aqui
+                //ordemResult.setConta(conta);
+                //fazer metodo que retorna a conta por id q é gg
+                ordemResult.setTipoOrdem(TipoOrdem.valueOf(tipoOrdem));
+                ordemResult.setTicker(ticker);
+                ordemResult.setQuantidade(quantidade);
+                ordemResult.setEstado(Estado.valueOf(estado));
+                ordemResult.setValor(valor);
+                ordemResult.setValor(valorTotal);
+                ordemResult.setDataCriacao(dataCriacao);
+                ordemResult.setDataModificacao(dataAlteracao);
+                
+                ordens.add(ordemResult);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return ordens;
     }
-    
+        
+     public void removerConta(int id) {
+        String sql = "delete from ordem where id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);) {
+            stmt.setInt(1, id);
+            stmt.execute();
+            //System.out.println("Ordem removida com sucesso.");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+/*
     public boolean ordem0(Cliente cliente, Ativos ativo){
         for(int i = 0; i < vetorOrdem.length; i++){
             if(vetorOrdem[i] != null){
@@ -53,11 +133,11 @@ public class DAOOrdem {
         }
         return true;
     }
-    
+    */
     /*public Ordem achaOrdem(){
         
     }*/
-
+/*
     public void comprarAtivo(Cliente cliente, Ativos ativo, int numAtivo){
         Ordem ordemCompra = new Ordem();  
         
@@ -148,7 +228,7 @@ public class DAOOrdem {
             daoOrdemExecucao.criar(novaOrdem);
         }
     }
-    
+    */
     public void venderAtivo(Cliente cliente, BigDecimal valorVenda, Ativos ativo, int numAtivo){
         
         OrdemExecucao novaOrdem = new OrdemExecucao();

@@ -8,7 +8,7 @@ package Entities;
 import Entities.Enum.TipoOrdem;
 import Entities.Enum.Estado;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -16,7 +16,6 @@ import java.util.Objects;
  * @author jp_te
  */
 public class Ordem {
-    private static int nextId;
     private int id;
     private int quantidade;
     private BigDecimal valor;
@@ -25,12 +24,10 @@ public class Ordem {
     private String ticker;
     private TipoOrdem tipoOrdem;
     private Estado estado;
-    private Date dataCriacao;
-    private Date dataModificacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataModificacao;
     
     public Ordem(){
-        this.id = nextId++;
-        this.dataCriacao = new Date();
     }
 
     public int getId() {
@@ -57,10 +54,10 @@ public class Ordem {
     public Estado getEstado() {
         return estado;
     }
-    public Date getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
-    public Date getDataModificacao() {
+    public LocalDateTime getDataModificacao() {
         return dataModificacao;
     }
 
@@ -88,10 +85,10 @@ public class Ordem {
     public void setEstado(Estado estado) {
         this.estado = estado;
     }
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
-    public void setDataModificacao(Date dataModificacao) {
+    public void setDataModificacao(LocalDateTime dataModificacao) {
         this.dataModificacao = dataModificacao;
     }
     

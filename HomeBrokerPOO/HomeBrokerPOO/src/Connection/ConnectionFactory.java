@@ -22,7 +22,7 @@ public class ConnectionFactory {
         try {
             Properties properties = new Properties();
             properties.setProperty("user", "root");
-            properties.setProperty("password", "admwindows");
+            properties.setProperty("password", "vertrigo");
             properties.setProperty("useSSL", "false");
             properties.setProperty("useTimezone", "true");
             properties.setProperty("serverTimezone", "UTC");

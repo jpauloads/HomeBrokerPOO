@@ -17,91 +17,6 @@ create table cliente(
     PRIMARY KEY (id_cliente)
 );
 
-create table tickers(
-	id_ticker		int not null AUTO_INCREMENT,
-    nome_empresa	varchar(100) not null,
-    ticker			varchar(3) not null,
-    total_ativos	int not null,
-    preco_inicial	double not null,
-    data_criacao   	DateTime not null,
-	data_alteracao 	DateTime,
-    PRIMARY KEY (id_ticker)
-);
-
-create table conta(
-	id_conta		int not null AUTO_INCREMENT,
-    id_cliente		int not null,
-    saldo			double,
-    data_criacao   	DateTime not null,
-	data_alteracao 	DateTime,
-    PRIMARY KEY (id_conta)
-);
-
-create table movimentacao(
-	id_movimentacao	int not null AUTO_INCREMENT,
-    valor			double not null,
-    id_origem		int not null,
-    id_destino		int not null,
-    tipo_operacao	varchar(100) not null,
-    descricao		varchar(1000),
-    data_criacao   	DateTime not null,
-	data_alteracao 	DateTime,
-    PRIMARY KEY (id_movimentacao)
-);
-
-ALTER TABLE `trabalho`.`cliente` 
-CHARACTER SET = utf8mb4 , ENGINE = InnoDB ;
-
-ALTER TABLE `trabalho`.`conta` 
-CHARACTER SET = utf8mb4 , ENGINE = InnoDB ;
-
-ALTER TABLE `trabalho`.`movimentacao` 
-CHARACTER SET = utf8mb4 , ENGINE = InnoDB ;
-
-ALTER TABLE `trabalho`.`tickers` 
-CHARACTER SET = utf8mb4 , ENGINE = InnoDB ;
-
-ALTER TABLE `trabalho`.`conta` 
-ADD INDEX `id_cliente_idx` (`id_cliente` ASC);
-;
-ALTER TABLE `trabalho`.`conta` 
-ADD CONSTRAINT `id_cliente`
-  FOREIGN KEY (`id_cliente`)
-  REFERENCES `trabalho`.`cliente` (`id_cliente`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
-
-
-ALTER TABLE `trabalho`.`cliente` 
-ADD INDEX `id_conta_idx` (`id_conta` ASC);
-;
-ALTER TABLE `trabalho`.`cliente` 
-ADD CONSTRAINT `id_conta`
-  FOREIGN KEY (`id_conta`)
-  REFERENCES `trabalho`.`conta` (`id_conta`)
-  ON DELETE SET NULL
-  ON UPDATE NO ACTION;
-
-
-CREATE TABLE `trabalho`.`ordem` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `id_conta` INT NOT NULL,
-  `tipo_ordem` VARCHAR(45) NULL,
-  `ticker` VARCHAR(5) NOT NULL,
-  `quantidade` INT NOT NULL,
-  `estado` VARCHAR(45) NULL,
-  `valor` DOUBLE NOT NULL,
-  `valor_total` DOUBLE NOT NULL,
-  `data_alteracao` DATETIME NULL,
-  `data_criacao` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
-
-
-UPDATE `trabalho`.`cliente` SET `id_conta` = '1' WHERE (`id_cliente` = '1');
-UPDATE `trabalho`.`cliente` SET `id_conta` = '2' WHERE (`id_cliente` = '2');
-
 insert into cliente (login, senha, nome, cpf, endereco, telefone, tipo, data_criacao, data_alteracao)
 values ("bolsa", "135", "IBOVESPA", "95550600013", "Rua de ouros, 10", "34987643030", "BOLSA", "80-09-01", "01-09-01");
 
@@ -119,7 +34,16 @@ values ("comum2", "321", "MC Carol", "24520690005", "Se essa rua fosse minha, 82
 insert into cliente (login, senha, nome, cpf, endereco, telefone, tipo, data_criacao, data_alteracao)
 values ("comum3", "321", "Roberto Carlos", "60514235080", "Se essa rua fsosse minha, 420", "84933821382", "COMUM", "80-09-01", "01-09-01");
 
-
+create table tickers(
+	id_ticker		int not null AUTO_INCREMENT,
+    nome_empresa	varchar(100) not null,
+    ticker			varchar(3) not null,
+    total_ativos	int not null,
+    preco_inicial	double not null,
+    data_criacao   	DateTime not null,
+	data_alteracao 	DateTime,
+    PRIMARY KEY (id_ticker)
+);
 
 insert into tickers (nome_empresa, ticker, total_ativos, preco_inicial, data_criacao, data_alteracao)
 values ("João Pedro & Paulo", "JPP", 5, 50.0, "80-09-01", "01-09-01");
@@ -128,11 +52,33 @@ values ("Magalu", "MAG", 5, 50.0, "80-09-01", "01-09-01");
 insert into tickers (nome_empresa, ticker, total_ativos, preco_inicial, data_criacao, data_alteracao)
 values ("Only fans", "ONF", 5, 50.0, "80-09-01", "01-09-01");
 
-
+create table conta(
+	id_conta		int not null AUTO_INCREMENT,
+    id_cliente		int not null,
+    saldo			double,
+    data_criacao   	DateTime not null,
+	data_alteracao 	DateTime,
+    PRIMARY KEY (id_conta)
+);
 
 insert into conta (id_cliente, saldo, data_criacao, data_alteracao)
 values (1 , 500000, "80-09-01", "01-09-01");
 insert into conta (id_cliente, saldo, data_criacao, data_alteracao)
 values (2 , 20000, "80-09-01", "01-09-01");
 
+create table movimentacao(
+	id_movimentacao	int not null AUTO_INCREMENT,
+    valor			double not null,
+    id_origem		int not null,
+    id_destino		int not null,
+    tipo_operacao	varchar(100) not null,
+    descricao		varchar(1000),
+    data_criacao   	DateTime not null,
+	data_alteracao 	DateTime,
+    PRIMARY KEY (id_movimentacao)
+);
 
+drop table cliente;
+drop table tickers;
+drop table conta;
+drop table movimentacao;
