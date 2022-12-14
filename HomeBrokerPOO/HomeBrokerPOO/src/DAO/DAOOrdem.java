@@ -34,6 +34,7 @@ import java.util.List;
 public class DAOOrdem {
     
     private Connection connection = null;
+    private DAOConta daoConta = new DAOConta();
     
     public DAOOrdem(){
         this.connection = new ConnectionFactory().getConnection();
@@ -63,7 +64,7 @@ public class DAOOrdem {
         }
     }
     
-        public List<Ordem> listaOrdem(){
+        public List<Ordem> listaOrdem(Cliente cliente){
         List<Ordem> ordens = new ArrayList<>();
         
         String sql = "select * from ordem";
@@ -73,7 +74,7 @@ public class DAOOrdem {
 
             while (resultQuery.next()) {
                 int id = resultQuery.getInt("id");
-                //int idConta = resultQuery.getInt("id_conta");
+                int idConta = resultQuery.getInt("id_conta");
                 String tipoOrdem = resultQuery.getString("tipo_ordem");
                 String ticker = resultQuery.getString("id_ticker");
                 int quantidade = resultQuery.getInt("quantidade");
@@ -86,12 +87,11 @@ public class DAOOrdem {
                 LocalDateTime dataAlteracao = LocalDateTime.parse(resultQuery.getTimestamp("data_alteracao").toString(), formatter);
 
                 Ordem ordemResult = new Ordem();
+
+                //acho q vai dar certo
+                //Agora ta indo a conta pra arraylist tbm, fiz um método no daoconta que retorna a conta passando o id
                 ordemResult.setId(id);
-                
-                ordemResult.setId(id);
-                //tem q buscar a conta pra setar aqui
-                //ordemResult.setConta(conta);
-                //fazer metodo que retorna a conta por id q é gg
+                ordemResult.setConta(daoConta.buscarContaPorId(idConta));
                 ordemResult.setTipoOrdem(TipoOrdem.valueOf(tipoOrdem));
                 ordemResult.setTicker(ticker);
                 ordemResult.setQuantidade(quantidade);

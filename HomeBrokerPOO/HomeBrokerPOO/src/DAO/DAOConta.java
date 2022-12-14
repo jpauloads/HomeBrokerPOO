@@ -3,7 +3,6 @@ package DAO;
 import Connection.ConnectionFactory;
 import Entities.Cliente;
 import Entities.Conta;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,15 +26,15 @@ public class DAOConta {
         this.connection = new ConnectionFactory().getConnection();
     }
     
-    //Q q faz? Pq esse codigo não retorna uma lista?
+    //retorna a conta por cliente
     public Conta retornarConta(Cliente cliente){
         Conta conta = new Conta(cliente);
         String sql = "select * from conta where id_cliente = ?";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql);){
             stmt.setInt(1, cliente.getId());
-            ResultSet resultQuery;
-            resultQuery = stmt.executeQuery();
+            ResultSet resultQuery = stmt.executeQuery();
+            
             while (resultQuery.next()) {
                 int id = resultQuery.getInt("id_conta");
                 BigDecimal saldo = BigDecimal.valueOf(resultQuery.getDouble("saldo"));
@@ -55,6 +54,38 @@ public class DAOConta {
         }
         return conta;
         
+    }
+    
+    //Retorna a conta passando só o id dela
+    public Conta buscarContaPorId(int id) {
+        String sql = "select * from conta where id_conta = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql);){
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                int idConta = rs.getInt("id_conta");
+                BigDecimal saldo = BigDecimal.valueOf(rs.getDouble("saldo"));
+                
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss.S");
+                LocalDateTime dataCriacao = LocalDateTime.parse(rs.getTimestamp("data_criacao").toString(), formatter);
+                LocalDateTime dataAlteracao = LocalDateTime.parse(rs.getTimestamp("data_alteracao").toString(), formatter);
+
+                Conta conta = new Conta();
+                conta.setId(idConta);
+                //setar tbm a busca por id do cliente pra trazer ele aqui e amarrar tudo
+                conta.setSaldo(saldo);
+                conta.setDataCriacao(dataCriacao);
+                conta.setDataModificacao(dataAlteracao);
+
+                return conta;
+            }
+            rs.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
     
     public void criarConta(Cliente cliente){
