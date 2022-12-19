@@ -5,7 +5,7 @@
  */
 package Entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -13,25 +13,25 @@ import java.util.Objects;
  * @author jp_te
  */
 public class OrdemExecucao {
-    private final int id;
-    private static int serial;
-    
+    private int id;    
     private int quantidade;
     private Ordem ordem;
     private Conta contaCompra;
     private Conta contaVende;
-    private Date dataCriacao;
-    private Date dataModificacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataModificacao;
     
     public OrdemExecucao() {
-        this.id = ++OrdemExecucao.serial;
-        this.quantidade = 1;
     }
 
-    public static int getSerial() {
-        return serial;
+    public int getId() {
+        return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public int getQuantidade() {
         return quantidade;
     }
@@ -64,19 +64,19 @@ public class OrdemExecucao {
         this.contaVende = contaVende;
     }
 
-    public Date getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
-    public Date getDataModificacao() {
+    public LocalDateTime getDataModificacao() {
         return dataModificacao;
     }
 
-    public void setDataModificacao(Date dataModificacao) {
+    public void setDataModificacao(LocalDateTime dataModificacao) {
         this.dataModificacao = dataModificacao;
     }
 
@@ -133,9 +133,9 @@ public class OrdemExecucao {
     public String toString() {
         return "\nOrdemExecucao" + " id = " + id + 
                 "\nQuantidade = " + quantidade + 
-                "\nOrdem = " + ordem + 
-                "\nContaCompra = " + contaCompra + 
-                "\nContaVende = " + contaVende + 
+                "\nOrdem = " + ordem.getId() + 
+                "\nContaCompra = " + contaCompra.getId() + 
+                "\nContaVende = " + contaVende.getId() + 
                 "\nDataCriacao = " + dataCriacao + 
                 "\nDataModificacao = " + dataModificacao;
     }

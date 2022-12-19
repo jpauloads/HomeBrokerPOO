@@ -3,6 +3,7 @@ package DAO;
 import Connection.ConnectionFactory;
 import Entities.Cliente;
 import Entities.Conta;
+import Entities.Ordem;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,6 +23,7 @@ import java.util.List;
 public class DAOConta {
    
     private Connection connection = null;
+    private static DAOMovimentacao daoMovimentacao = new DAOMovimentacao();
     
     public DAOConta(){
         this.connection = new ConnectionFactory().getConnection();
@@ -53,7 +56,37 @@ public class DAOConta {
             throw new RuntimeException(e);
         }
         return conta;
+    }
+    
+    public List<Conta> getContas(){
+        List<Conta> contas = new ArrayList<>();
+        String sql = "select * from conta";
+        try (PreparedStatement stmt = connection.prepareStatement(sql);){
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                int idConta = rs.getInt("id_conta");
+                BigDecimal saldo = BigDecimal.valueOf(rs.getDouble("saldo"));
+                
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd' 'HH:mm:ss.S");
+                LocalDateTime dataCriacao = LocalDateTime.parse(rs.getTimestamp("data_criacao").toString(), formatter);
+                LocalDateTime dataAlteracao = LocalDateTime.parse(rs.getTimestamp("data_alteracao").toString(), formatter);
+
+                Conta conta = new Conta();
+                conta.setId(idConta);
+                //setar tbm a busca por id do cliente pra trazer ele aqui e amarrar tudo
+                conta.setSaldo(saldo);
+                conta.setDataCriacao(dataCriacao);
+                conta.setDataModificacao(dataAlteracao);
+
+                contas.add(conta);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         
+        return contas;
     }
     
     //Retorna a conta passando só o id dela
@@ -74,7 +107,8 @@ public class DAOConta {
 
                 Conta conta = new Conta();
                 conta.setId(idConta);
-                //setar tbm a busca por id do cliente pra trazer ele aqui e amarrar tudo
+                //conta.setCliente(cliente);
+
                 conta.setSaldo(saldo);
                 conta.setDataCriacao(dataCriacao);
                 conta.setDataModificacao(dataAlteracao);
@@ -124,34 +158,62 @@ public class DAOConta {
     }
     
     /* OPERAÇÕES DE CONTA */
-    public void depositar(int idConta, BigDecimal valor){
+    public void depositar(int idConta, BigDecimal valor, 
+            String tipoOperacao, String descricao){
         adicionarValor(idConta, valor);
+        daoMovimentacao.criarMovimentacao(valor, idConta, idConta, "deposito", tipoOperacao, descricao);
     }
     
-    public void sacar(int idConta, BigDecimal valor){
-        removerValor(idConta, valor);
+    public void sacar(int idConta, BigDecimal valor, String tipoOperacao, String descricao){
+        boolean op = removerValor(idConta, valor);
+        if(op){
+            daoMovimentacao.criarMovimentacao(valor, idConta, idConta, "saque", tipoOperacao, descricao);
+        }
     }
     
-    public void pagar(int idContaOrigem, BigDecimal valor, int idContaDestino){
-        removerValor(idContaOrigem, valor);
-        adicionarValor(idContaDestino, valor);
+    public void pagar(int idContaOrigem, BigDecimal valor, int idContaDestino,
+            String tipoOperacao, String descricao){
+        boolean op = removerValor(idContaOrigem, valor);
+        if(op){
+            daoMovimentacao.criarMovimentacao(valor, idContaOrigem, idContaDestino, 
+                    "pagamento", tipoOperacao, descricao);
+            adicionarValor(idContaDestino, valor);
+        }
+        
     }
     
-    public void transferir(int idContaOrigem, BigDecimal valor, int idContaDestino){
-        removerValor(idContaOrigem, valor);
-        adicionarValor(idContaDestino, valor);
+    public void transferir(int idContaOrigem, BigDecimal valor, int idContaDestino,
+            String tipoOperacao, String descricao){
+        boolean op = removerValor(idContaOrigem, valor);
+        if(op){
+            daoMovimentacao.criarMovimentacao(valor, idContaOrigem, idContaDestino, 
+                    "Transferencia", tipoOperacao, descricao);
+            adicionarValor(idContaDestino, valor);
+        }
     }
 
-    /*public void comprarAtivos(Cliente cliente, Ativos ativo, String numAtivos){
+    public boolean comprarAtivos(Cliente cliente, Ordem ativo, int numAtivos){
         
-        BigDecimal valor = ativo.getPrecoInicial().multiply(new BigDecimal(numAtivos));
+        boolean op = removerValor(cliente.getConta().getId(), 
+                ativo.getValor().multiply(BigDecimal.valueOf(numAtivos)));
         
-        
-        
-        cliente.getConta().setAtivos(ativo);
+        return op;
     }
     
-    public void venderAtivos(Cliente cliente, BigDecimal novoValor, Ativos ativoEscolhido){
+    public boolean comprarAtivosOrdem0(Cliente cliente, Ordem ativo, int numAtivos){
+        
+        if(numAtivos <= 3){
+            boolean op = removerValor(cliente.getConta().getId(), 
+                    ativo.getValor().multiply(BigDecimal.valueOf(numAtivos)).multiply(BigDecimal.valueOf(0.9)));
+
+            return op;           
+        } else{
+            System.out.println("O numero de ativos deve ser menor que 3");
+            return false;
+        }
+    }
+    
+    /*public void venderAtivos(Cliente cliente, BigDecimal novoValor, Ativos ativoEscolhido){
         for(int i = 0; i < cliente.getConta().getAtivos().length; i++){
             if(cliente.getConta().getAtivos()[i] != null){
                 if(cliente.getConta().getAtivos()[i].getId() == ativoEscolhido.getId()){
@@ -212,7 +274,7 @@ public class DAOConta {
         dataAlteracao(idConta);
     }
 
-    public void removerValor(int idConta, BigDecimal valor){
+    public boolean removerValor(int idConta, BigDecimal valor){
         BigDecimal saldo = BigDecimal.valueOf(0.00);
         
         String sql = "select saldo from conta where id_conta = ?";
@@ -228,23 +290,43 @@ public class DAOConta {
             throw new RuntimeException(e);
         }
         
-        saldo = saldo.subtract(valor);
+        if(saldo.compareTo(valor) == -1){
+            JOptionPane.showMessageDialog (null, "Não foi possível realizar a operação");
+            return false;
+        }else{
+            saldo = saldo.subtract(valor);
         
-        String sqlRmoverValor = "update conta set "
-                + "saldo = ?" 
-                + "where id_conta = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sqlRmoverValor);){
-            stmt.setDouble(1, saldo.doubleValue());
-            stmt.setInt(2, idConta);
-            stmt.execute();
+            String sqlRmoverValor = "update conta set "
+                    + "saldo = ?" 
+                    + "where id_conta = ?";
 
-            System.out.println("Valor removido com sucesso.");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try (PreparedStatement stmt = connection.prepareStatement(sqlRmoverValor);){
+                stmt.setDouble(1, saldo.doubleValue());
+                stmt.setInt(2, idConta);
+                stmt.execute();
+
+                System.out.println("Valor removido com sucesso.");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            
+            dataAlteracao(idConta);
+            return true;
         }
+    }
+    
+    public void custoManutencao(){
+        List<Conta> contas = getContas();
         
-        dataAlteracao(idConta);
+        for(Conta conta : contas){
+            if(conta.getId() != 1){
+                boolean op = removerValor(conta.getId(), BigDecimal.valueOf(25.0));
+                if(op){
+                    daoMovimentacao.criarMovimentacao(BigDecimal.valueOf(25.0), conta.getId(), 1, 
+                    "manutenção", "DEBITO", "pagamento de manutenção");
+                }
+            }
+        }
     }
     
     public void adicionarBolsa(){

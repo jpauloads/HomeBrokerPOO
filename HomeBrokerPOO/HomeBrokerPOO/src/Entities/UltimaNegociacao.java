@@ -6,6 +6,7 @@
 package Entities;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -21,8 +22,8 @@ public class UltimaNegociacao {
     private String ticker;
     private Conta contaCompra;
     private Conta contaVenda;
-    private Date dataCriacao;
-    private Date dataModificacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataModificacao;
 
     public int getId() {
         return id;
@@ -45,10 +46,10 @@ public class UltimaNegociacao {
     public Conta getContaVenda() {
         return contaVenda;
     }
-    public Date getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
-    public Date getDataModificacao() {
+    public LocalDateTime getDataModificacao() {
         return dataModificacao;
     }
 
@@ -73,10 +74,10 @@ public class UltimaNegociacao {
     public void setContaVenda(Conta contaVenda) {
         this.contaVenda = contaVenda;
     }
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
-    public void setDataModificacao(Date dataModificacao) {
+    public void setDataModificacao(LocalDateTime dataModificacao) {
         this.dataModificacao = dataModificacao;
     }
 

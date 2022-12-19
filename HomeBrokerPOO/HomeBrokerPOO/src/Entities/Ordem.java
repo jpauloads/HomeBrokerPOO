@@ -149,6 +149,17 @@ public class Ordem {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "\nId = " + id + 
+                "\nTicker = " + ticker +
+                "\nQuantidade de ativos = " + quantidade + 
+                "\nValor de cada ativo = " + valor + 
+                "\nValor total = " + valorTotal + 
+                "\nConta origem = " + conta.getId() + 
+                "\nTipo da ordem = " + tipoOrdem;
+    }
     
     
 }

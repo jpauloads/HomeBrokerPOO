@@ -7,6 +7,7 @@ package DAO;
 
 import Connection.ConnectionFactory;
 import Entities.Ativos;
+import Entities.Cliente;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public class DAOAtivos {
     
+    private DAOConta daoConta = new DAOConta();
     private DAOOrdem daoOrdem = new DAOOrdem();
     private Connection connection = null;
     
@@ -86,6 +88,9 @@ public class DAOAtivos {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        
+        daoOrdem.criarOrdem(1, "VENDA", ticker, totalAtivos, "TOTAL", 
+                precoInicial, precoInicial.multiply(BigDecimal.valueOf(totalAtivos)));
     }
     
     public void alterarAtivos(String nomeEmpresa, String ticker, int totalAtivos, BigDecimal precoInicial, int id){
@@ -121,4 +126,5 @@ public class DAOAtivos {
             throw new RuntimeException(e);
         }
     }
+    
 }

@@ -40,7 +40,7 @@ public class DAOCliente {
         }
         return null;
     }
-    
+
     public List<Cliente> getClientes(){
         List<Cliente> clientes = new ArrayList<>();
         String sql = "select * from cliente";

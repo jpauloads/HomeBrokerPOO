@@ -71,6 +71,14 @@ public class Main {
                                         break;
                                     }
                                     case 10:{
+                                        GUI.removerOrdem();
+                                        break;
+                                    }
+                                    case 11:{
+                                        GUI.alterarData();
+                                        break;
+                                    }
+                                    case 12:{
                                         break;
                                     }
                                     default: {
@@ -78,12 +86,12 @@ public class Main {
                                         break;
                                     }
                                 }
-                            }while(opAdm != 10);
+                            }while(opAdm != 12);
                             
                         }else{
                             int opComum;
                             //Cadastrar conta nova
-                            if(GUI.atualizarConta(cliente).getId() == 0){
+                            if(cliente.getConta() == null){
                                 do{
                                     opComum = GUI.contaLogada(cliente);
                                     switch(opComum){
@@ -104,7 +112,7 @@ public class Main {
                                 }while(opComum != 2);
                             }
                             
-                            if(GUI.atualizarConta(cliente).getId() != 0){
+                            if(cliente.getConta() != null){
                                 do{
                                     opComum = GUI.contaLogada(cliente);
                                     switch(opComum){
@@ -125,7 +133,7 @@ public class Main {
                                             break;
                                         }
                                         case 5:{
-                                            //GUI.meusAtivos(cliente);
+                                            GUI.meusAtivos(cliente);
                                             break;
                                         }
                                         case 6:{
@@ -137,11 +145,15 @@ public class Main {
                                             break;
                                         }
                                         case 8:{
-                                            GUI.fecharConta(cliente);
-                                            opComum = 9;
+                                            GUI.ultimaNegociacao(cliente);
                                             break;
                                         }
                                         case 9:{
+                                            GUI.fecharConta(cliente);
+                                            opComum = 10;
+                                            break;
+                                        }
+                                        case 10:{
                                             break;
                                         }
                                         default: {
@@ -149,7 +161,7 @@ public class Main {
                                             break;
                                         }
                                     }
-                                }while(opComum != 9);
+                                }while(opComum != 10);
                             }
                         }
 

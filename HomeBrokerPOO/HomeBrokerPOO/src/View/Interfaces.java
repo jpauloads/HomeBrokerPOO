@@ -14,10 +14,12 @@ import DAO.DAOAtivos;
 import DAO.DAOMovimentacao;
 import DAO.DAOOrdem;
 import DAO.DAOOrdemExecucao;
+import DAO.DataControl;
 import Entities.Ativos;
 import Entities.Conta;
-import Entities.Enum.Operacao;
+import Entities.Enum.TipoOrdem;
 import Entities.Movimentacao;
+import Entities.Ordem;
 import Entities.OrdemExecucao;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -84,7 +86,9 @@ public class Interfaces {
             builder.append("\n7- Alterar ticker");
             builder.append("\n8- Remover ticker");
             builder.append("\n9- Lista de tickers");
-            builder.append("\n10- Sair");
+            builder.append("\n10- Remover ordem");
+            builder.append("\n11- Alterar data");
+            builder.append("\n12- Sair");
         }else{
             if(atualizarConta(cliente).getId() == 0){
                 builder.append("\n1- Cadastrar conta");
@@ -99,8 +103,9 @@ public class Interfaces {
                 builder.append("\n5- Ver meus ativos");
                 builder.append("\n6- Abrir book de ofertas");
                 builder.append("\n7- Extrato");
-                builder.append("\n8- Fechar conta");
-                builder.append("\n9- Sair");
+                builder.append("\n8- Última negociação");
+                builder.append("\n9- Fechar conta");
+                builder.append("\n10- Sair");
             }
         }
         op = Integer.parseInt(JOptionPane.showInputDialog(builder));
@@ -193,13 +198,19 @@ public class Interfaces {
 
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
+        builder.append("\n| Pagamento de dividendos |");
+        builder.append("\n---------------------------");
+        builder.append("\nInsira o ticker do dividendo que deseja pagar: ");
+        String ticker = JOptionPane.showInputDialog(builder);
+        builder.append(ticker);
+        builder.append("\nValor do dividendo: ");
+        BigDecimal valorDividendo = new BigDecimal(JOptionPane.showInputDialog(builder));
+        builder.append(valorDividendo);
         builder.append("\nDeseja executar agora o pagamento de dividendos?");
         int yesNo = JOptionPane.showConfirmDialog (null,"\nDeseja executar agora o pagamento de dividendos?", "HOME BROKER JJ", JOptionPane.YES_NO_OPTION);
-        
         if(yesNo == 0){
-            //daoConta.pagarDividendos(daoCliente.getClientes());
+            daoOrdem.pagarDividendos(ticker, valorDividendo);
         }
-        
     }
     
     public void cadastrarAtivos(){
@@ -268,18 +279,34 @@ public class Interfaces {
         JOptionPane.showMessageDialog (null, builder);
     }
     
+    public void alterarData(){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\n| Alteração de data |");
+        builder.append("Data atual: ");
+        builder.append(DataControl.now());
+        builder.append("\n---------------------------");
+        builder.append("\nInsira quantos dias deseja passar: ");
+        int id = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        DataControl.adicionaDias(id);
+    }
+    
+    public void removerOrdem(){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\n| Remoção de ordem |");
+        builder.append("\n---------------------------");
+        builder.append("\nInsira o id da ordem que deseja remover: ");
+        int id = Integer.parseInt(JOptionPane.showInputDialog(builder));
+        daoOrdem.removerOrdem(id);
+    }
     
     
     /* TELAS COMUM */
-
     public Conta atualizarConta(Cliente cliente){
-        //Conta conta = new Conta();
-        return daoConta.retornarConta(cliente);
-        
-        
-         
+        return daoConta.retornarConta(cliente); 
     }
-    
+
     public void cadastrarConta(Cliente cliente){
         builder.delete(0, builder.length());
         builder.append("HOME BROKER JJ");
@@ -312,8 +339,7 @@ public class Interfaces {
         builder.append("\nDescricao: ");
         String descricao = JOptionPane.showInputDialog(builder);
         
-        daoConta.depositar(cliente.getConta().getId(), valor);
-        daoMovimentacao.criarMovimentacao(valor, cliente.getConta().getId(), cliente.getConta().getId(), tipoOperacao, descricao);
+        daoConta.depositar(cliente.getConta().getId(), valor, tipoOperacao, descricao);
     }
     
     //saque
@@ -327,8 +353,7 @@ public class Interfaces {
         builder.append("\nDescricao: ");
         String descricao = JOptionPane.showInputDialog(builder);
 
-        daoConta.sacar(cliente.getConta().getId(), valor);
-        daoMovimentacao.criarMovimentacao(valor, cliente.getConta().getId(), cliente.getConta().getId(), tipoOperacao, descricao);
+        daoConta.sacar(cliente.getConta().getId(), valor, tipoOperacao, descricao);
     }
     
     //pagamento
@@ -344,8 +369,7 @@ public class Interfaces {
         builder.append("\nDescricao: ");
         String descricao = JOptionPane.showInputDialog(builder);
 
-        daoConta.pagar(cliente.getConta().getId(), valor, 2);
-        daoMovimentacao.criarMovimentacao(valor, cliente.getConta().getId(), 2, tipoOperacao, descricao);
+        daoConta.pagar(cliente.getConta().getId(), valor, 1, tipoOperacao, descricao);
     }
     
     //transferencia
@@ -358,7 +382,7 @@ public class Interfaces {
         builder.append("\nInsira o id da conta para qual deseja transferir");
         int idDestino = Integer.parseInt(JOptionPane.showInputDialog(builder));
         
-        if(idDestino == cliente.getId()){
+        if(idDestino == cliente.getConta().getId()){
             JOptionPane.showMessageDialog (null, "Não é possível transferir para a própria conta");
             return;
         }
@@ -374,8 +398,8 @@ public class Interfaces {
         int confirmar = Integer.parseInt(JOptionPane.showInputDialog(builder));
         
         if(confirmar == 1){
-            daoConta.transferir(cliente.getConta().getId(), valor, idDestino);
-            daoMovimentacao.criarMovimentacao(valor, cliente.getConta().getId(), idDestino, tipoOperacao, descricao);
+            daoConta.transferir(cliente.getConta().getId(), valor, idDestino,
+                    tipoOperacao, descricao);
             JOptionPane.showMessageDialog (null, "Transferencia realizada com sucesso");
         }else{
             JOptionPane.showMessageDialog (null, "Transferencia cancelada");
@@ -395,6 +419,13 @@ public class Interfaces {
         JOptionPane.showMessageDialog (null, builder);
     }
     
+    public void ultimaNegociacao(Cliente cliente){
+        builder.delete(0, builder.length());
+        builder.append("HOME BROKER JJ");
+        builder.append("\n| Última negociação |");
+        builder.append("\n---------------------------");
+    }
+    
     
     //FALTA ARRUMAR AS DATAS DE ATIVOS E DE ORDENS
     /* TELAS REFERENTES A ATIVOS */
@@ -404,19 +435,21 @@ public class Interfaces {
     
     //FALTA ARRUMAR AS DATAS DE ATIVOS E DE ORDENS
     // Tela para ver os ativos comprados
-    /*public void meusAtivos(Cliente cliente){
-        Ativos[] meusAtivos = cliente.getConta().getAtivos();
+    public void meusAtivos(Cliente cliente){
+        List<Ordem> ordens = daoOrdem.listaOrdem();
         int op;
-        
+        Ordem ativoEscolhido = null;
         do{
             builder.delete(0, builder.length());
             builder.append("HOME BROKER JJ");
             builder.append("\n| Seus Ativos |");
             builder.append("\n---------------------------");
-            for(int i = 0; i < meusAtivos.length; i++){
-                if(meusAtivos[i] != null){
-                    builder.append("\n" + meusAtivos[i].getTicker());
-                    builder.append("\n");
+            for(Ordem ordem : ordens){
+                if(ordem.getConta().getId() == cliente.getConta().getId()){
+                    if(ordem.getTipoOrdem() == TipoOrdem.COMPRA || ordem.getTipoOrdem() == TipoOrdem.ORDEM0){
+                        builder.append("\n" + ordem);
+                        builder.append("\n");
+                    }
                 }
             }
             builder.append("\n1- Vender ativos");
@@ -424,7 +457,22 @@ public class Interfaces {
             op = Integer.parseInt(JOptionPane.showInputDialog(builder));
             switch(op){
                 case 1:{
-                    venderAtivo(cliente);
+                    builder.append("\nInsira o ID do ativo que deseja vender: ");
+                    int ativoId = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    builder.append(ativoId);
+                    builder.append("\nQual o valor de venda: ");
+                    BigDecimal novoValor = new BigDecimal(JOptionPane.showInputDialog(builder));
+                    builder.append(novoValor);
+                    builder.append("\nQuantos ativos deseja vender: ");
+                    int numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    builder.append(numAtivo);
+                    for(Ordem ativo: ordens){
+                        if(ativo.getId() == ativoId){
+                            ativoEscolhido = ativo;
+                            break;
+                        }
+                    }
+                    daoOrdem.venderAtivo(cliente, novoValor, ativoEscolhido, numAtivo);
                     break;
                 }
                 case 2:{
@@ -435,70 +483,74 @@ public class Interfaces {
                 }
             }
         }while(op != 2);
-        
     }
-    
-    public void venderAtivo(Cliente cliente){
-        Ativos[] vetorAtivos = daoAtivos.getAtivos();
-        Ativos ativoEscolhido = null;
 
-        int numAtivo;
-        
-        builder.delete(0, builder.length());
-        builder.append("HOME BROKER JJ");
-        builder.append("\n| Vender Ativo |");
-        builder.append("\n---------------------------");
-        for(int i = 0; i < cliente.getConta().getAtivos().length; i++){
-            if(cliente.getConta().getAtivos()[i] != null){
-                builder.append("\n"+cliente.getConta().getAtivos()[i]);
-            }
-        }
-        builder.append("\nInsira o ID do ativo que deseja vender: ");
-        int ativoId = Integer.parseInt(JOptionPane.showInputDialog(builder));
-        builder.append(ativoId);
-        builder.append("\nQual o valor de venda: ");
-        BigDecimal novoValor = new BigDecimal(JOptionPane.showInputDialog(builder));
-        builder.append(novoValor);
-        builder.append("\nQuantos ativos deseja vender: ");
-        numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
-        builder.append(novoValor);
-        
-        for(int i = 0; i < vetorAtivos.length; i++){
-            if(vetorAtivos[i] != null && vetorAtivos[i].getId() == ativoId){
-                ativoEscolhido = vetorAtivos[i];
-                break;
-            }
-        }
-        
-        daoOrdem.venderAtivo(cliente, novoValor, ativoEscolhido, numAtivo);
-
-    }*/
     // Book de ofertas
     public void bookOfertas(Cliente cliente){
-        List<Ativos> ativos = daoAtivos.getAtivos();
-        Ativos ativoEscolhido = null;
-        builder.delete(0, builder.length());
-        builder.append("HOME BROKER JJ");
-        builder.append("\n| BOOK DE OFERTAS |");
-        builder.append("\n---------------------------");
-        for(Ativos ativo: ativos){
-            builder.append("\n" + ativo);
-            builder.append("\n");
-        }
-        builder.append("\nInsira o ID do ativo que deseja comprar: ");
-        int ativoId = Integer.parseInt(JOptionPane.showInputDialog(builder));
-        for(Ativos ativo: ativos){
-            if(ativo.getId() == ativoId){
-                ativoEscolhido = ativo;
-                break;
-            }
-        }
-        builder.append(ativoId);
-        builder.append("\nQuantos ativos deseja comprar: ");
-        int numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
-        builder.append(numAtivo);
+        List<Ordem> ativos = daoOrdem.listaOrdem();
+        Ordem ativoEscolhido = null;
+        int op;
         
-        daoOrdem.comprarAtivo(cliente, ativoEscolhido, numAtivo);
+        do{
+            builder.delete(0, builder.length());
+            builder.append("HOME BROKER JJ");
+            builder.append("\n| BOOK DE OFERTAS |");
+            builder.append("\n---------------------------");
+            for(Ordem ativo: ativos){
+                if(ativo.getTipoOrdem() == TipoOrdem.VENDA &&
+                        ativo.getQuantidade() > 0){
+                    builder.append("\n" + ativo);
+                    builder.append("\n");
+                }
+            }
+            builder.append("\n1- Comprar ativos");
+            builder.append("\n2- Comprar ativos(Ordem 0)");
+            builder.append("\n3- Sair");
+            op = Integer.parseInt(JOptionPane.showInputDialog(builder));
+            switch(op){
+                case 1:{
+                    builder.append("\nInsira o ID do ativo que deseja comprar: ");
+                    int ativoId = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    for(Ordem ativo: ativos){
+                        if(ativo.getId() == ativoId){
+                            ativoEscolhido = ativo;
+                            break;
+                        }
+                    }
+                    builder.append(ativoId);
+                    builder.append("\nQuantos ativos deseja comprar: ");
+                    int numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    builder.append(numAtivo);
+
+                    daoOrdem.comprarAtivo(cliente, ativoEscolhido, numAtivo);
+                    break;
+                }
+                case 2:{
+                    builder.append("\nInsira o ID do ativo que deseja comprar: ");
+                    int ativoId = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    for(Ordem ativo: ativos){
+                        if(ativo.getId() == ativoId){
+                            ativoEscolhido = ativo;
+                            break;
+                        }
+                    }
+                    builder.append(ativoId);
+                    builder.append("\nQuantos ativos deseja comprar (maximo 3): ");
+                    int numAtivo = Integer.parseInt(JOptionPane.showInputDialog(builder));
+                    builder.append(numAtivo);
+                    //metodo de comprar ativo ordem 0
+                    daoOrdem.comprarAtivoOrdem0(cliente, ativoEscolhido, numAtivo);
+                    break;
+                    
+                }
+                case 3:{
+                    break;
+                }
+                default:{
+                    JOptionPane.showMessageDialog (null, "Insira um valor válido");
+                }
+            }
+        }while(op != 3);
     }
     
     public void listaClientes(){

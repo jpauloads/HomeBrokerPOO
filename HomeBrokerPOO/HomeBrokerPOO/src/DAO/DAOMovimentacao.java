@@ -80,24 +80,25 @@ public class DAOMovimentacao {
         return movimentacoes;
     }
     
-    public void criarMovimentacao(BigDecimal valor, int idOrigem, int idDestino, 
+    public void criarMovimentacao(BigDecimal valor, int idOrigem, int idDestino, String operacao, 
             String tipoOperacao, String descricao){
         
         String sql = "insert into movimentacao "
-                + "(valor, id_origem, id_destino, tipo_operacao, descricao, data_criacao, data_alteracao)" 
-                + " values (?,?,?,?,?,?,?)";
+                + "(valor, id_origem, id_destino, operacao, tipo_operacao, descricao, data_criacao, data_alteracao)" 
+                + " values (?,?,?,?,?,?,?,?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql);){
             stmt.setDouble(1, valor.doubleValue());
             stmt.setInt(2, idOrigem);
             stmt.setInt(3, idDestino);
-            stmt.setString(4, tipoOperacao);
-            stmt.setString(5, descricao);
-            stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(4, operacao);
+            stmt.setString(5, tipoOperacao);
+            stmt.setString(6, descricao);
             stmt.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             stmt.execute();
 
-            System.out.println("Cliente inserido com sucesso.");
+            System.out.println("Movimentacao inserida com sucesso.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
